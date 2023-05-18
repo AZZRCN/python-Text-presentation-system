@@ -3,19 +3,20 @@ from os import listdir
 from tkinter.messagebox import showerror
 main = tk.Tk()
 
-
+num = 0
 def tkopen(filename):
-    
-    t = tk.Toplevel()
-    def Esc(event):
-        if (event.keycode == 27):  # Esc
-            t.destroy()
-    t.bind("<Key>", Esc)
-    t.attributes("-fullscreen",True)
-    text = tk.Text(master=t)
-    text.grid(column=0, row=0)
-    escbutton = tk.Button(master=t, width=50,height=50,text="Esc")
-    escbutton.grid(column=0, row=0)
+    def Esc():
+        text.destroy()
+        escbutton.destroy()
+    try:
+        text.destroy()
+        escbutton.destroy()
+    except BaseException:
+        None
+    text = tk.Text(master=main,width=200)
+    text.grid(column=1, row=0,rowspan=num)
+    escbutton = tk.Button(master=main,text="ESC",command=Esc)
+    escbutton.grid(column=0, row=num+1)
     try:
         with open(filename, encoding="utf-8") as f:
             text.insert('1.0', str(f.read()))
@@ -40,21 +41,21 @@ def tkopen(filename):
 def frush():
     global main
     list_a = listdir()
-    cur = 0
+    global num
     for i in list_a:
         if (len(i) < 4):
 
             continue
         if (i[-4:-1] + i[-1] == ".txt"):  # and i[0:3] == "演示-"
             print(i)
-            exec("temp"+str(cur)+" = tk.Button(master=main, text=\""+i +
-                 "\",command=lambda:tkopen(\""+i+"\"))\ntemp"+str(cur)+".grid(row="+str(cur)+", column=0)")
-            cur += 1
+            exec("temp"+str(num)+" = tk.Button(master=main, text=\""+i +
+                 "\",command=lambda:tkopen(\""+i+"\"))\ntemp"+str(num)+".grid(row="+str(num)+", column=0)")
+            num += 1
 
 
-#frush()
+frush()
 main.attributes("-fullscreen",True)
 main.update()
-print(main.winfo_height)
-print(main.winfo_width)
-#main.mainloop()
+h=main.winfo_height()
+w=main.winfo_width()
+main.mainloop()
