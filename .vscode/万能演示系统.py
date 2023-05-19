@@ -1,45 +1,50 @@
 import tkinter as tk
 from os import listdir
+from os import chdir
+from tkinter.filedialog import askdirectory
 from tkinter.messagebox import showerror
 main = tk.Tk()
 
+
+def Esc():
+    global text
+    text.destroy()
+    text = tk.Text(master=main,width=200)
+text = tk.Text(master=main,width=200)
 num = 0
 def tkopen(filename):
-    def Esc():
-        text.destroy()
-        escbutton.destroy()
+    f = 0
     try:
-        text.destroy()
-        escbutton.destroy()
-    except BaseException:
-        None
-    text = tk.Text(master=main,width=200)
-    text.grid(column=1, row=0,rowspan=num)
-    escbutton = tk.Button(master=main,text="ESC",command=Esc)
-    escbutton.grid(column=0, row=num+1)
-    try:
-        with open(filename, encoding="utf-8") as f:
-            text.insert('1.0', str(f.read()))
+        f = open(filename, encoding="utf-8")
     except BaseException:
         try:
-            with open(filename, encoding="gbk") as f:
-                text.insert('1.0', str(f.read()))
+            f = open(filename, encoding="gbk")
         except BaseException:
             try:
-                with open(filename, encoding="gb2312") as f:
-                    text.insert('1.0', str(f.read()))
+                f = open(filename, encoding="gb2312")
             except BaseException:
                 try:
-                    with open(filename, encoding="Unicode") as f:
-                        text.insert('1.0', str(f.read()))
+                    f = open(filename, encoding="Unicode")
                 except BaseException:
-                    showerror(title="错误!",message="这个文件编码不太常见!")
-    print(f)
-    
+                    try:
+                        f = open(filename, encoding="ANSI")
+                    except BaseException:
+                        try:
+                            f = open(filename, encoding="USC2")
+                        except BaseException:
+                            try:
+                                f = open(filename, encoding="UTF16")
+                            except BaseException:
+                                showerror(title="错误!",message="这个文件可能不是正规txt?")
+                                return
+    global text
+    text.grid(column=1,row=0,rowspan=num)
+    text.insert('1.0', str(f.read()))
+    f.close()
 
-
-def frush():
+def frush(path):
     global main
+    chdir(path)
     list_a = listdir()
     global num
     for i in list_a:
@@ -52,8 +57,8 @@ def frush():
                  "\",command=lambda:tkopen(\""+i+"\"))\ntemp"+str(num)+".grid(row="+str(num)+", column=0)")
             num += 1
 
-
-frush()
+path = askdirectory()
+if path != "":frush(path)
 main.attributes("-fullscreen",True)
 main.update()
 h=main.winfo_height()
