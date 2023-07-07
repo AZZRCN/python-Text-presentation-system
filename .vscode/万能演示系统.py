@@ -34,14 +34,15 @@ def frush(path):
     num = 0
     for i in listdir():
         if (i[-4:-1] + i[-1] == ".cpp" or i[-4:-1] + i[-1] == ".txt" or i[-3:-1] + i[-1] == ".py"):
-            exec(f"temp{num} = tk.Button(master=main, text=\"{i}\",font=(\"等线\",10),command=lambda:tkopen(\"{i}\"))\ntemp{num}.grid(column={num % howmanybuttonsarow},row={int(num/howmanybuttonsarow)+1})\nglobal buttonlist\nbuttonlist.append(temp{num})")
+            buttonlist.append(tk.Button(master=main, text=i,font=("system",10),command=lambda:tkopen(i)))
+            buttonlist[num].grid(column=num % howmanybuttonsarow,row=int(num/howmanybuttonsarow)+1)
             num += 1
 #def chmbar():
 #    top = tk.Toplevel(main)
 #    entry = tk.Entry(top)
 #    entry.grid(column=0, row=0)
     
-text = ScrolledText(master=main,height=round(main.winfo_screenheight()/13.1))
+text = ScrolledText(master=main,height=round(main.winfo_screenheight()/13.1),width=100)
 frush(askdirectory())
 text.grid(column=howmanybuttonsarow, row=0, rowspan=99, sticky='n')#len(listdir())
 tk.Button(main,text="exit",command=exit).grid(column=2,row=0)
