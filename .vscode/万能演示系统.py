@@ -2,49 +2,46 @@ import tkinter as tk
 from tkinter.scrolledtext import ScrolledText
 from os import listdir,chdir
 from tkinter.filedialog import askdirectory
-from PIL import Image, ImageTk
 main = tk.Tk()
 howmanybuttonsarow = 5
 buttonlist:list[tk.Button] =[]
 main.attributes("-fullscreen", True)
 main.update()
-canva = tk.Canvas(main,width=main.winfo_screenwidth(),height=main.winfo_screenheight())
-canva.grid(row=0, column=0, sticky=tk.NSEW,columnspan=howmanybuttonsarow+2,rowspan=100)
-img = Image.open(fp="C:\\Users\\86156\\Documents\\GitHub\\python-Text-presentation-system\\.vscode\\view.png")
-img = img.resize((main.winfo_screenwidth(), main.winfo_screenheight()), Image.LANCZOS)
-img_tk = ImageTk.PhotoImage(img)
-canva.create_image(0, 0, image=img_tk, anchor="nw")
-background = tk.PhotoImage("view.png")
 def clean():
     text.delete('1.0','end')
 tk.Button(master=main,text="清除",command=clean).grid(column=1,row=0)
 def newpathc():
-    for i in buttonlist:i.destroy()
+    t =  len(buttonlist)
+    for i in range(0,t):
+        buttonlist[t-1-i].destroy()
+        del buttonlist[t-1-i]
+    main.update()
     frush(askdirectory())
     clean()
 tk.Button(master=main, text="选取新路径",command=newpathc).grid(column=0, row=0)
 def tkopen(filename):
-    text.delete('1.0', 'end')
-    try:text.insert('1.0', str(open(filename, encoding='utf-8').read()))
+    clean()
+    print(filename)
+    try:
+        text.insert('1.0', open(filename, encoding='utf-8').read())
     except BaseException:
-        try:text.insert('1.0', str(open(filename, encoding='gbk').read()))
-        except BaseException:text.insert('1.0', str(open(filename, encoding='utf16').read()))
+        try:
+            text.insert('1.0', str(open(filename, encoding='gbk').read()))
+        except BaseException:
+            text.insert('1.0', str(open(filename, encoding='utf16').read()))
 def frush(path):
     chdir(path)
+    print(path)
     num = 0
-    for i in listdir():
+    nowlinestr = 0
+    dili = listdir()
+    for i in dili:
         if (i[-4:-1] + i[-1] == ".cpp" or i[-4:-1] + i[-1] == ".txt" or i[-3:-1] + i[-1] == ".py"):
-            buttonlist.append(tk.Button(master=main, text=i,font=("system",10),command=lambda:tkopen(i)))
-            buttonlist[num].grid(column=num % howmanybuttonsarow,row=int(num/howmanybuttonsarow)+1)
+            buttonlist.append(tk.Button(master=main, text=i,font=("system",10),command=lambda x=i:tkopen(x)))
+            buttonlist[num].grid(column=num % 5,row=int(num/5)+2)
             num += 1
-#def chmbar():
-#    top = tk.Toplevel(main)
-#    entry = tk.Entry(top)
-#    entry.grid(column=0, row=0)
-    
-text = ScrolledText(master=main,height=round(main.winfo_screenheight()/13.1),width=100)
+text = ScrolledText(master=main,width=int(main.winfo_screenwidth() / 7.1))#,height=round(main.winfo_screenheight()/13.1)
+text.grid(column=0, row=1, sticky='n',columnspan=5)#len(listdir())
 frush(askdirectory())
-text.grid(column=howmanybuttonsarow, row=0, rowspan=99, sticky='n')#len(listdir())
 tk.Button(main,text="exit",command=exit).grid(column=2,row=0)
-#tk.Button(main,text="更新行数",command=chmbar).grid(column=howmanybuttonsarow+1,row=2)
 main.mainloop()
